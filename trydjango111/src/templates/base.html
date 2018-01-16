@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head>
+    <title> {%block head_title %}MuyPicky{% endblock head_title%}</title>
+    {% include 'snippets/css.html' %}
+  </head>
+  <body>
+    {% include 'snippets/nav.html' %}
+    <div class='container'>
+      {% block content %}
+        hello there! (only shows up if block.super is present in the inheriting html)
+      {% endblock content %}
+    </div>
+
+    {% include 'snippets/js.html' %}
+  </body>
+</html>
