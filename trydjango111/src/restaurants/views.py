@@ -3,6 +3,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import RestaurantLocationCreateForm
 from .models import RestaurantLocation
@@ -53,7 +54,17 @@ class RestaurantDetailView(DetailView):
     #     obj = get_object_or_404(RestaurantLocation, id=rest_id)# or pk=rest_id
     #     return obj
 
-class RestaurantCreateView(CreateView):
+class RestaurantCreateView(LoginRequiredMixin, CreateView):
     form_class = RestaurantLocationCreateForm
+    #login_url = '/login/' # moved to base.py(settings)
+    # because we pretty much want it to redirect to this url
+    # for every loginrequired view
     template_name = 'restaurants/form.html'
-    success_url = '/restaurants/'
+    #success_url = '/restaurants/'
+
+    #override
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.owner = self.request.user
+        # form_valid saves after with the super() call
+        return super(RestaurantCreateView, self).form_valid(form)
